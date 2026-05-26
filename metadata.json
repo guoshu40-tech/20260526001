@@ -1,0 +1,6 @@
+{
+  "name": "AI 會議記錄生成與翻譯工具",
+  "description": "一鍵將會議逐字稿、重點筆記轉化為結構清晰、美觀排版的商務會議記錄，並支援多國語言即時翻譯。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

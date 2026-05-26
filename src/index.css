@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* 針對 Markdown 渲染結果的美化樣式 */
+.markdown-body {
+  font-family: var(--font-sans);
+  color: #1e293b; /* slate-800 */
+  line-height: 1.75;
+}
+
+.markdown-body h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a; /* slate-900 */
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0; /* slate-200 */
+}
+
+.markdown-body h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #1e1b4b; /* indigo-950 */
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.markdown-body h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #312e81; /* indigo-900 */
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-body p {
+  margin-bottom: 1rem;
+  color: #334155; /* slate-700 */
+}
+
+.markdown-body ul, .markdown-body ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.markdown-body ul {
+  list-style-type: disc;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+}
+
+.markdown-body li {
+  margin-bottom: 0.4rem;
+  color: #334155;
+}
+
+.markdown-body blockquote {
+  border-left: 4px solid #4f46e5; /* indigo-600 */
+  background-color: #f8fafc; /* slate-50 */
+  padding: 1rem 1.25rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin-bottom: 1.25rem;
+  font-style: italic;
+  font-family: var(--font-sans);
+}
+
+.markdown-body strong {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.925rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.markdown-body th, .markdown-body td {
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.markdown-body th {
+  background-color: #f1f5f9; /* slate-100 */
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.markdown-body tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.markdown-body tr:hover {
+  background-color: #f1f5f9;
+}
+
+.markdown-body code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background-color: #f1f5f9;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  color: #e11d48; /* rose-600 */
+}
+
+.markdown-body pre {
+  background-color: #0f172a; /* slate-900 */
+  color: #f8fafc;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: 0.875rem;
+}
