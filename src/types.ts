@@ -4,6 +4,7 @@
  */
 
 export interface SummaryRequest {
+  provider: "gemini" | "nvidia";
   transcript: string;
   language: string;
   style: string;
@@ -26,4 +27,5 @@ export interface HistoryItem {
   language: string;
   style: string;
   tone: string;
+  provider?: "gemini" | "nvidia";
 }

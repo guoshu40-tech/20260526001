@@ -71,6 +71,7 @@ const LOADING_STEPS = [
 
 export default function App() {
   // 輸入與配置設定狀態
+  const [provider, setProvider] = useState<"gemini" | "nvidia">("gemini");
   const [transcript, setTranscript] = useState("");
   const [language, setLanguage] = useState("台灣繁體中文 🇹🇼");
   const [style, setStyle] = useState("詳細重點逐條 📋");
@@ -119,7 +120,7 @@ export default function App() {
   }, [loading]);
 
   // 儲存至本地歷史
-  const saveToHistory = (newResult: string, originalTranscript: string, lang: string, sty: string, tn: string) => {
+  const saveToHistory = (newResult: string, originalTranscript: string, lang: string, sty: string, tn: string, prov: "gemini" | "nvidia") => {
     try {
       let title = "AI 會議整理";
       const match = newResult.match(/^#\s+(.+)$/m);
@@ -137,7 +138,8 @@ export default function App() {
         result: newResult,
         language: lang,
         style: sty,
-        tone: tn
+        tone: tn,
+        provider: prov
       };
 
       const updated = [newItem, ...historyList].slice(0, 50);
@@ -178,6 +180,7 @@ export default function App() {
 
     try {
       const reqBody: SummaryRequest = {
+        provider,
         transcript,
         language,
         style,
@@ -185,7 +188,7 @@ export default function App() {
         additionalPrompt: additionalPrompt.trim() || undefined
       };
 
-      const response = await fetch("/api/summary", {
+      const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(reqBody)
@@ -195,12 +198,12 @@ export default function App() {
 
       if (response.ok && data.success && data.result) {
         setResult(data.result);
-        saveToHistory(data.result, transcript, language, style, tone);
+        saveToHistory(data.result, transcript, language, style, tone, provider);
       } else {
         setError(data.error || "伺服器分析失敗，請檢查 API 與 System Instructions 功能設定。");
       }
     } catch (err: any) {
-      setError("與後端伺服器通訊錯誤，請確認 Server.ts 連線狀態：(" + (err?.message || "網路連線異常") + ")");
+      setError("與後端伺服器通訊錯誤，請確認 API 連線狀態：(" + (err?.message || "網路連線異常") + ")");
     } finally {
       setLoading(false);
     }
@@ -253,6 +256,7 @@ export default function App() {
     setLanguage(item.language);
     setStyle(item.style);
     setTone(item.tone);
+    setProvider(item.provider || "gemini");
     setError("");
   };
 
@@ -287,7 +291,7 @@ export default function App() {
             使用說明
           </button>
           <div className="px-3.5 py-1.5 bg-slate-900 text-white text-[11px] font-semibold rounded-full hover:bg-slate-800 transition-colors select-none">
-            Gemini 3.5 Ready
+            {provider === "gemini" ? "Gemini 2.5 Lite Ready" : "NVIDIA Minimax Ready"}
           </div>
         </div>
       </header>
@@ -388,6 +392,10 @@ export default function App() {
                           <span>{item.timestamp}</span>
                           <span>•</span>
                           <span className="text-slate-500">{item.language}</span>
+                          <span>•</span>
+                          <span className="bg-indigo-50 text-indigo-700 px-1.5 py-0.2 rounded-sm text-[8px] font-bold font-sans uppercase">
+                            {item.provider || "gemini"}
+                          </span>
                         </div>
                       </div>
                     ))
@@ -450,6 +458,43 @@ export default function App() {
             <h3 className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
               <Settings className="h-4 w-4 text-slate-400" /> 系統指令與變更參數
             </h3>
+
+            {/* AI Provider Card-Style Selector */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-bold text-slate-500 flex items-center gap-1">
+                <Sparkles className="h-3 w-3 text-indigo-500 animate-pulse" /> AI 服務提供商
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setProvider("gemini")}
+                  className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col justify-center ${
+                    provider === "gemini"
+                      ? "bg-indigo-50/60 border-indigo-500 shadow-3xs"
+                      : "bg-slate-50/50 border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  <span className={`text-[10.5px] font-bold ${provider === "gemini" ? "text-indigo-700" : "text-slate-700"}`}>
+                    Google Gemini
+                  </span>
+                  <span className="text-[8px] text-slate-400 font-mono mt-0.5">gemini-2.5-lite</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setProvider("nvidia")}
+                  className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all flex flex-col justify-center ${
+                    provider === "nvidia"
+                      ? "bg-indigo-50/60 border-indigo-500 shadow-3xs"
+                      : "bg-slate-50/50 border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  <span className={`text-[10.5px] font-bold ${provider === "nvidia" ? "text-indigo-700" : "text-slate-700"}`}>
+                    NVIDIA
+                  </span>
+                  <span className="text-[8px] text-slate-400 font-mono mt-0.5">minimax-m2.7</span>
+                </button>
+              </div>
+            </div>
 
             <div className="grid grid-cols-2 gap-3.5">
               <div className="flex flex-col gap-1">
@@ -692,9 +737,9 @@ export default function App() {
       {/* Sleek Analytics Footer Bar */}
       <footer className="h-10 bg-slate-100 border-t border-slate-200/80 px-8 flex items-center justify-between shrink-0 select-none z-10">
         <div className="text-[9px] text-slate-400 font-medium tracking-wider uppercase flex items-center gap-1.5">
-          <span>Powered by Gemini 3.5 & Tailwind CSS</span>
+          <span>Powered by Gemini & NVIDIA & Tailwind CSS</span>
           <span>•</span>
-          <span>Security Encripted SSL Edge</span>
+          <span>Security Encrypted SSL Edge</span>
         </div>
         <div className="flex gap-5">
           <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-mono">
